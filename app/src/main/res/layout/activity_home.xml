@@ -33,7 +33,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="4dp"
-        tools:text="上海新网程"
+        android:text="未获取到地址信息"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:gravity="center"
@@ -46,7 +46,7 @@
         android:id="@+id/tv_latlng"
         android:layout_above="@id/tv_address"
         android:layout_marginBottom="8dp"
-        tools:text="a1111afdafafadfa"
+        android:text="未获取到经纬度信息"
         android:layout_alignParentRight="true"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
@@ -58,15 +58,15 @@
 
     <ImageView
         android:id="@+id/iv_save"
-        android:layout_above="@+id/tv_latlng"
         android:layout_marginBottom="12dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="8dp"
         android:padding="10dp"
         android:src="@drawable/icon_save"
         android:background="@drawable/shape_circle"
         android:layout_width="40dp"
-        android:layout_height="40dp"/>
+        android:layout_height="40dp"
+        android:layout_above="@+id/tv_latlng"
+        android:layout_alignLeft="@+id/iv_location"
+        android:layout_alignStart="@+id/iv_location"/>
 
 
     <ImageView
@@ -77,6 +77,17 @@
         android:layout_marginBottom="12dp"
         android:padding="9dp"
         android:src="@drawable/icon_location"
+        android:background="@drawable/shape_circle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+    <ImageView
+        android:id="@+id/iv_share"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="20dp"
+        android:padding="9dp"
+        android:src="@drawable/icon_share"
         android:background="@drawable/shape_circle"
         android:layout_width="40dp"
         android:layout_height="40dp"/>

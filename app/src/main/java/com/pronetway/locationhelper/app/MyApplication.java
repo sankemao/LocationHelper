@@ -1,9 +1,10 @@
-package com.pronetway.loactionhelper.app;
+package com.pronetway.locationhelper.app;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.blankj.utilcode.util.Utils;
-import com.pronetway.loactionhelper.utils.AMLocationUtil;
+import com.pronetway.locationhelper.utils.AMLocationUtil;
 
 /**
  * Description:TODO
@@ -12,10 +13,12 @@ import com.pronetway.loactionhelper.utils.AMLocationUtil;
  * Email:210980059@qq.com
  */
 public class MyApplication extends Application {
+    public static Context cxt;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        cxt = this;
         Utils.init(this);
         AMLocationUtil.init(this);
     }

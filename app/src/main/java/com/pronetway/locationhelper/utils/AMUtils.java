@@ -1,4 +1,4 @@
-package com.pronetway.loactionhelper.utils;
+package com.pronetway.locationhelper.utils;
 
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.services.core.LatLonPoint;

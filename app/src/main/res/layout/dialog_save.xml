@@ -1,9 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:background="@drawable/shape_content_bg"
+              android:background="@drawable/shape_dialog_bg"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="录入信息"
+        android:textColor="#000"
+        android:textSize="16sp"/>
+
+    <View
+        android:background="#CCC"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MAC"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+
+        <EditText
+            android:id="@+id/et_mac"
+            android:maxLength="17"
+            android:hint="请填写mac"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="32dp"
+            android:layout_marginLeft="10dp"
+            android:background="@null"
+            android:singleLine="true"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+    <View
+        android:layout_marginLeft="36dp"
+        android:background="#CCC"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
 
     <LinearLayout
         android:layout_marginTop="5dp"
@@ -13,41 +62,76 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="MAC:"
+            android:text="场所"
+            android:textColor="#000"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <EditText
-            android:id="@+id/et_mac"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:id="@+id/et_place"
+            android:hint="请填写场所名称"
+            android:layout_marginLeft="12dp"
+            android:background="@null"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="32dp"/>
+        <ImageView
+
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
     </LinearLayout>
 
+    <View
+        android:layout_marginLeft="36dp"
+        android:background="#CCC"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
     <LinearLayout
+        android:layout_marginTop="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="场所:"
+            android:text="地址"
+            android:textColor="#000"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <EditText
-            android:id="@+id/et_place"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:id="@+id/et_address"
+            android:layout_marginLeft="12dp"
+            android:textSize="14sp"
+            android:hint="请填写地址信息"
+            android:background="@null"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:minHeight="32dp"/>
     </LinearLayout>
+
+    <View
+        android:layout_marginTop="9dp"
+        android:background="#CCC"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/tv_cancel"
+            android:textColor="#000"
             android:gravity="center"
             android:text="取消"
+            android:textSize="15sp"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="40dp"/>
+            android:layout_height="42dp"/>
 
         <View
             android:background="#CCCCCC"
@@ -56,11 +140,13 @@
 
         <TextView
             android:id="@+id/tv_save"
+            android:textColor="#000"
+            android:textSize="15sp"
             android:gravity="center"
             android:text="保存"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="40dp"/>
+            android:layout_height="42dp"/>
 
     </LinearLayout>
 

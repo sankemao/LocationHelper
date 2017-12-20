@@ -1,4 +1,4 @@
-package com.pronetway.loactionhelper;
+package com.pronetway.locationhelper;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
