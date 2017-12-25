@@ -64,7 +64,8 @@ public class ExcelUtils {
             row.createCell(2).setCellValue(info.getAddress());
             row.createCell(3).setCellValue(info.getLatitude());
             row.createCell(4).setCellValue(info.getLongitude());
-            row.createCell(5).setCellValue(info.getTime());
+            row.createCell(5).setCellValue(info.getRemark());
+            row.createCell(6).setCellValue(info.getTime());
 
             fos.flush();
             wb.write(fos);
@@ -104,7 +105,8 @@ public class ExcelUtils {
                 row.createCell(2).setCellValue(info.getAddress());
                 row.createCell(3).setCellValue(info.getLatitude());
                 row.createCell(4).setCellValue(info.getLongitude());
-                row.createCell(5).setCellValue(info.getTime());
+                row.createCell(5).setCellValue(info.getRemark());
+                row.createCell(6).setCellValue(info.getTime());
             }
             fos.flush();
             wb.write(fos);
@@ -132,7 +134,8 @@ public class ExcelUtils {
                 sheet.setColumnWidth(2, 20 * 300);
                 sheet.setColumnWidth(3, 20 * 140);
                 sheet.setColumnWidth(4, 20 * 140);
-                sheet.setColumnWidth(5, 20 * 180);
+                sheet.setColumnWidth(5, 20 * 200);
+                sheet.setColumnWidth(6, 20 * 180);
 //                HSSFCellStyle style = getStyle(workbook);
                 HSSFRow row = sheet.createRow(0);
                 row.createCell(0).setCellValue("MAC");
@@ -140,7 +143,8 @@ public class ExcelUtils {
                 row.createCell(2).setCellValue("场所地址");
                 row.createCell(3).setCellValue("纬度");
                 row.createCell(4).setCellValue("经度");
-                row.createCell(5).setCellValue("记录时间");
+                row.createCell(5).setCellValue("备注");
+                row.createCell(6).setCellValue("记录时间");
                 workbook.write(mOs);
                 mOs.flush();
                 mOs.close();

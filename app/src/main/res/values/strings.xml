@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">LoactionHelper</string>
+
+    <string name="device_mac">设备Mac: %s</string>
+    <string name="place_name">场所名称: %s</string>
+    <string name="address">场所地址: %s</string>
+    <string name="longitude">经度: %s</string>
+    <string name="latitude">纬度: %s</string>
+    <string name="remark">备注: %s</string>
+    <string name="time">加入时间: %s</string>
+
 </resources>

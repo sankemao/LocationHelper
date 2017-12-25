@@ -1,7 +1,8 @@
-package com.pronetway.locationhelper;
+package com.pronetway.locationhelper.ui;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -26,8 +27,10 @@ import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.pronetway.locationhelper.R;
 import com.pronetway.locationhelper.app.Constant;
 import com.pronetway.locationhelper.bean.LocationInfo;
+import com.pronetway.locationhelper.db.dbutils.LocationDbUtils;
 import com.pronetway.locationhelper.utils.AMLocationUtil;
 import com.pronetway.locationhelper.utils.CommonUtils;
 import com.pronetway.locationhelper.utils.ExcelUtils;
@@ -251,7 +254,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     /**
-     * 7.0权限适配
+     * 6.0权限适配
      */
     @PermissionSucceed(requestCode = APP_PERSSION)
     private void permissionSucceed() {
@@ -259,7 +262,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     /**
-     * 7.0权限适配
+     * 6.0权限适配
      */
     @PermissionFail(requestCode = APP_PERSSION)
     private void permissionFail() {
@@ -267,7 +270,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     /**
-     * 7.0权限适配
+     * 6.0权限适配
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -319,7 +322,6 @@ public class HomeActivity extends BaseActivity {
                         .setOnClickListener(R.id.tv_save, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                //保存数据
                                 String mac = getDialogInputString(R.id.et_mac);
                                 if (TextUtils.isEmpty(mac)) {
                                     ToastUtils.showShort("请输入mac");
@@ -329,14 +331,18 @@ public class HomeActivity extends BaseActivity {
                                     return;
                                 }
                                 String place = getDialogInputString(R.id.et_place);
+                                String remark = getDialogInputString(R.id.et_remark);
                                 if (TextUtils.isEmpty(place)) {
                                     ToastUtils.showShort("请输入场所名称");
                                     return;
                                 }
                                 String address = getDialogInputString(R.id.et_address);
                                 String time = TimeUtils.millis2String(System.currentTimeMillis(), TIME_FORMAT);
-                                LocationInfo locationInfo = new LocationInfo(mac, place, address, currentLatitude, currentLongitude, time);
+                                LocationInfo locationInfo = new LocationInfo(mac, place, address, currentLatitude, currentLongitude, remark, time);
+                                //保存到excel
                                 ExcelUtils.getInstance().writeLocationInfo(locationInfo, Constant.Excel.EXCEL_NAME);
+                                //保存到db.
+                                LocationDbUtils.getInstance().insertLocation(locationInfo);
                                 mSaveDialog.dismiss();
                             }
                         })
@@ -355,6 +361,7 @@ public class HomeActivity extends BaseActivity {
                         .setOnClickListener(R.id.share_choose, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                //分享excel.
                                 CommonUtils.shareExcel(HomeActivity.this, Constant.Excel.EXCEL_NAME);
                                 mShareDialog.dismiss();
                             }
@@ -362,6 +369,7 @@ public class HomeActivity extends BaseActivity {
                         .setOnClickListener(R.id.open_wps, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                //打开excel.
                                 CommonUtils.openExcel(HomeActivity.this, Constant.Excel.EXCEL_NAME);
                                 mShareDialog.dismiss();
                             }
@@ -369,7 +377,16 @@ public class HomeActivity extends BaseActivity {
                         .setOnClickListener(R.id.del, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                //确认删除
                                 showConfirmDialog();
+                                mShareDialog.dismiss();
+                            }
+                        })
+                        .setOnClickListener(R.id.look_over, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //查看本地记录
+                                startActivity(new Intent(HomeActivity.this, LocalHistoryActivity.class));
                                 mShareDialog.dismiss();
                             }
                         })

@@ -91,6 +91,29 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/look_over"
+            android:paddingTop="20dp"
+            android:paddingBottom="30dp"
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/icon_look_over"
+                android:padding="2dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"/>
+            <TextView
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="查看本地记录"
+                android:textColor="#000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

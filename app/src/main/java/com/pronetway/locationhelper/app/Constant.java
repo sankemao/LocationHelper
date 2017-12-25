@@ -21,4 +21,9 @@ public class Constant {
         public static final int APP_PERSSION = 0x0011;
     }
 
+    public static final class Db{
+        public static final String DB_NAME = "location.db";
+        public static final int DB_LIMIT = 20;
+    }
+
 }
