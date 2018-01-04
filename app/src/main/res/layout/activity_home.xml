@@ -61,7 +61,7 @@
         android:layout_marginBottom="12dp"
         android:padding="10dp"
         android:src="@drawable/icon_save"
-        android:background="@drawable/shape_circle"
+        android:background="@drawable/selector_circle"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_above="@+id/tv_latlng"
@@ -77,20 +77,21 @@
         android:layout_marginBottom="12dp"
         android:padding="9dp"
         android:src="@drawable/icon_location"
-        android:background="@drawable/shape_circle"
+        android:background="@drawable/selector_circle"
         android:layout_width="40dp"
         android:layout_height="40dp"/>
 
     <ImageView
         android:id="@+id/iv_share"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="19dp"
         android:padding="9dp"
         android:src="@drawable/icon_share"
-        android:background="@drawable/shape_circle"
+        android:background="@drawable/selector_circle"
         android:layout_width="40dp"
-        android:layout_height="40dp"/>
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/iv_location"
+        android:layout_alignStart="@+id/iv_location"/>
 
 
 </RelativeLayout>

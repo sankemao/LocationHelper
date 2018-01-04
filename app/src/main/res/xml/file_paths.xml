@@ -2,7 +2,6 @@
 <resources>
     <paths>
         <external-path
-            name="excels"
-            path="com.pronetway.locationhelper" />
+            name="excels" path="com.pronetway.locationhelper" />
     </paths>
 </resources>

@@ -7,16 +7,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_test"
-        android:text="插入一条数据"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
     <sankemao.baselib.recyclerview.LoadRefreshRecyclerView
         android:id="@+id/rv_locations"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
 
     </sankemao.baselib.recyclerview.LoadRefreshRecyclerView>
 

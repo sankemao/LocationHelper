@@ -1,11 +1,8 @@
 package com.pronetway.locationhelper.ui;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -29,16 +26,8 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.pronetway.locationhelper.R;
 import com.pronetway.locationhelper.app.Constant;
-import com.pronetway.locationhelper.bean.LocationInfo;
-import com.pronetway.locationhelper.db.dbutils.LocationDbUtils;
 import com.pronetway.locationhelper.utils.AMLocationUtil;
 import com.pronetway.locationhelper.utils.CommonUtils;
-import com.pronetway.locationhelper.utils.ExcelUtils;
-import com.pronetway.locationhelper.utils.MyTextWatcher;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -51,6 +40,8 @@ import sankemao.baselib.ui.dialog.AlertDialog;
 
 import static com.pronetway.locationhelper.app.Constant.Permission.APP_PERSSION;
 import static com.pronetway.locationhelper.utils.AMUtils.convertToLatLonPoint;
+import static com.pronetway.locationhelper.utils.GeneralUtils.TIME_FORMAT;
+
 /**
  * Description:TODO
  * Create Time: 2017/12/18.11:10
@@ -77,7 +68,6 @@ public class HomeActivity extends BaseActivity {
     private String currentLongitude;
     private String currentLatitude;
     private long exitTime = 0;
-    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("MM.dd-HH:mm:ss", Locale.getDefault());
 
     /**
      * 地图拖动监听回调
@@ -127,43 +117,10 @@ public class HomeActivity extends BaseActivity {
         }
     };
 
-    private int mInputTempLength;//输入的mac地址的temp长度
-    /**
-     * mac输入格式化
-     */
-    private MyTextWatcher mTextWatcher = new MyTextWatcher(){
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            mInputTempLength = s.toString().length();
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            String inputTemp = s.toString().trim();
-            switch (inputTemp.length()) {
-                case 2:
-                case 5:
-                case 8:
-                case 11:
-                case 14:
-                    if (inputTemp.length() > mInputTempLength) {
-                        mEtMac.setText(inputTemp + ":");
-                        mEtMac.setSelection(inputTemp.length() + 1);
-                    }
-                    break;
-            }
-        }
-    };
-
     private AlertDialog mSaveDialog;
     private EditText mEtMac;
     private AlertDialog mShareDialog;
     private AlertDialog mConfirmDialog;
-
-    @Override
-    public Context getContext() {
-        return this;
-    }
 
     @Override
     public PresenterManager attachPresenters() {
@@ -310,48 +267,8 @@ public class HomeActivity extends BaseActivity {
                 locationNow();
                 break;
             case R.id.iv_save:
-                mSaveDialog = new AlertDialog.Builder(this)
-                        .setContentView(R.layout.dialog_save)
-                        .setWidthAndHeight(ConvertUtils.dp2px(300), -2)
-                        .setOnClickListener(R.id.tv_cancel, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mSaveDialog.dismiss();
-                            }
-                        })
-                        .setOnClickListener(R.id.tv_save, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                String mac = getDialogInputString(R.id.et_mac);
-                                if (TextUtils.isEmpty(mac)) {
-                                    ToastUtils.showShort("请输入mac");
-                                    return;
-                                } else if (mac.length() < 17) {
-                                    ToastUtils.showShort("mac格式不正确");
-                                    return;
-                                }
-                                String place = getDialogInputString(R.id.et_place);
-                                String remark = getDialogInputString(R.id.et_remark);
-                                if (TextUtils.isEmpty(place)) {
-                                    ToastUtils.showShort("请输入场所名称");
-                                    return;
-                                }
-                                String address = getDialogInputString(R.id.et_address);
-                                String time = TimeUtils.millis2String(System.currentTimeMillis(), TIME_FORMAT);
-                                LocationInfo locationInfo = new LocationInfo(mac, place, address, currentLatitude, currentLongitude, remark, time);
-                                //保存到excel
-                                ExcelUtils.getInstance().writeLocationInfo(locationInfo, Constant.Excel.EXCEL_NAME);
-                                //保存到db.
-                                LocationDbUtils.getInstance().insertLocation(locationInfo);
-                                mSaveDialog.dismiss();
-                            }
-                        })
-                        .setText(R.id.et_address, currentAddress)
-                        .setCancelable(false)
-                        .addDefaultAnimation()
-                        .show();
-                mEtMac = mSaveDialog.getView(R.id.et_mac);
-                mEtMac.addTextChangedListener(mTextWatcher);
+                String time = TimeUtils.millis2String(System.currentTimeMillis(), TIME_FORMAT);
+                InputLocationInfoActivity.go(this, currentAddress, currentLatitude, currentLongitude, time);
                 break;
             case R.id.iv_share:
                 mShareDialog = new AlertDialog.Builder(this)
@@ -362,7 +279,7 @@ public class HomeActivity extends BaseActivity {
                             @Override
                             public void onClick(View v) {
                                 //分享excel.
-                                CommonUtils.shareExcel(HomeActivity.this, Constant.Excel.EXCEL_NAME);
+                                CommonUtils.shareExcel(HomeActivity.this, Constant.Path.EXCEL_NAME);
                                 mShareDialog.dismiss();
                             }
                         })
@@ -370,7 +287,7 @@ public class HomeActivity extends BaseActivity {
                             @Override
                             public void onClick(View v) {
                                 //打开excel.
-                                CommonUtils.openExcel(HomeActivity.this, Constant.Excel.EXCEL_NAME);
+                                CommonUtils.openExcel(HomeActivity.this, Constant.Path.EXCEL_NAME);
                                 mShareDialog.dismiss();
                             }
                         })
@@ -414,7 +331,7 @@ public class HomeActivity extends BaseActivity {
                 .setOnClickListener(R.id.tv_del, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CommonUtils.delExcel(Constant.Excel.EXCEL_NAME);
+                        CommonUtils.delExcel(Constant.Path.EXCEL_NAME);
                         mConfirmDialog.dismiss();
                     }
                 })

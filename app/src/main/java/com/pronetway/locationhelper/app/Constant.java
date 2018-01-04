@@ -11,10 +11,12 @@ import java.io.File;
  * Email:210980059@qq.com
  */
 public class Constant {
-    public static final class Excel {
-        public static final String EXCEL_PATH = Environment.getExternalStorageDirectory().getPath() + File.separator +
+    public static final class Path {
+        public static final String APP_PATH = Environment.getExternalStorageDirectory().getPath() + File.separator +
                 MyApplication.cxt.getPackageName()/*+ File.separator + "位置信息"*/;
         public static final String EXCEL_NAME = "位置记录.xls";
+        public static final String PHOTO_PATH = APP_PATH + File.separator + "照片";
+        public static final String CACHE = APP_PATH + File.separator + "缓存";
     }
 
     public static final class Permission {

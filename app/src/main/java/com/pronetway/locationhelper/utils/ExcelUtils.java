@@ -22,7 +22,7 @@ import java.util.List;
  */
 
 public class ExcelUtils {
-    private String dir = Constant.Excel.EXCEL_PATH;
+    private String dir = Constant.Path.APP_PATH;
 
     private static ExcelUtils sExcelUtils = new ExcelUtils();
 
@@ -123,7 +123,7 @@ public class ExcelUtils {
     private void createExcelIfNotExists(File excelFile) {
         if (!excelFile.exists()) {
             //生成目录.
-            new File(Constant.Excel.EXCEL_PATH).mkdirs();
+            new File(Constant.Path.APP_PATH).mkdirs();
             FileOutputStream mOs = null;
             try {
                 mOs = new FileOutputStream(excelFile);

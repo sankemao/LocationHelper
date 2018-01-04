@@ -24,7 +24,7 @@ public class CommonUtils {
      * 适配android 7.0
      */
     public static void openExcel(Context context, String fileName) {
-        File excelFile = new File(Constant.Excel.EXCEL_PATH, fileName);
+        File excelFile = new File(Constant.Path.APP_PATH, fileName);
         boolean fileExists = FileUtils.isFileExists(excelFile);
         if (!fileExists) {
             ToastUtils.showShort("未保存记录");
@@ -56,7 +56,7 @@ public class CommonUtils {
      * @param fileName
      */
     public static void delExcel(String fileName) {
-        File excelFile = new File(Constant.Excel.EXCEL_PATH, fileName);
+        File excelFile = new File(Constant.Path.APP_PATH, fileName);
         boolean fileExists = FileUtils.isFileExists(excelFile);
         if (!fileExists) {
             ToastUtils.showShort("未保存记录");
@@ -71,7 +71,7 @@ public class CommonUtils {
     }
 
     public static void shareExcel(Context context, String fileName) {
-        File excelFile = new File(Constant.Excel.EXCEL_PATH, fileName);
+        File excelFile = new File(Constant.Path.APP_PATH, fileName);
         boolean fileExists = FileUtils.isFileExists(excelFile);
         if (!fileExists) {
             ToastUtils.showShort("未保存记录");

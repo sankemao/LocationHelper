@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
+              android:background="@drawable/selector_common"
               android:orientation="vertical"
               android:paddingLeft="10dp"
               android:paddingTop="4dp"
@@ -51,20 +52,20 @@
 
         <TextView
             android:id="@+id/tv_longitude"
-            tools:text="经度: 12.333333"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="#000000"
             android:textSize="14sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            tools:text="经度: 12.333333"/>
 
         <TextView
             android:id="@+id/tv_latitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            tools:text="纬度: 12.333333"
             android:textColor="#000000"
             android:textSize="14sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            tools:text="纬度: 12.333333"/>
     </LinearLayout>
 
     <TextView

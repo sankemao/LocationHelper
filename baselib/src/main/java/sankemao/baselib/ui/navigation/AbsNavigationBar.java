@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -112,7 +113,7 @@ public class AbsNavigationBar<B extends AbsNavigationBar.AbsBuilder> implements 
         public SparseArray<Integer> mImageResMap;
         public SparseArray<Integer> mVisibilityMap;
 
-        public AbsBuilder(Context context, @LayoutRes int layoutId, ViewGroup parent) {
+        public AbsBuilder(Context context, @LayoutRes int layoutId, @Nullable ViewGroup parent) {
             this.mContext = context;
             this.mLayoutId = layoutId;
             this.mParent = parent;

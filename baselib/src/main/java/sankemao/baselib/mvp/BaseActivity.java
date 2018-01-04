@@ -1,5 +1,6 @@
 package sankemao.baselib.mvp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -71,4 +72,8 @@ public abstract class BaseActivity extends AppCompatActivity implements IView {
 
     }
 
+    @Override
+    public Context getContext() {
+        return this;
+    }
 }

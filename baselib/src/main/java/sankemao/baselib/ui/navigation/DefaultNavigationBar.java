@@ -2,6 +2,7 @@ package sankemao.baselib.ui.navigation;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 
 /**
@@ -15,7 +16,7 @@ public class DefaultNavigationBar extends AbsNavigationBar<DefaultNavigationBar.
         super(builder);
     }
 
-    public static Builder begin(Context context, @LayoutRes int layoutId, ViewGroup parent) {
+    public static Builder begin(Context context, @LayoutRes int layoutId, @Nullable ViewGroup parent) {
         return new Builder(context, layoutId, parent);
     }
 
