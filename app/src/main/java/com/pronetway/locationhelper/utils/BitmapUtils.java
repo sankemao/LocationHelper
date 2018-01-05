@@ -4,8 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.support.annotation.ColorInt;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 
 /**
  * Description:TODO
@@ -31,10 +33,10 @@ public class BitmapUtils {
         //底部阴影高度
         int shadowHeight = 200;
 
-        Paint fontPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        fontPaint.setDither(true);
-        fontPaint.setColor(color);
-        fontPaint.setTextSize(textSize);
+        TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setDither(true);
+        textPaint.setColor(color);
+        textPaint.setTextSize(textSize);
 
         Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         shadowPaint.setDither(true);
@@ -44,9 +46,13 @@ public class BitmapUtils {
         //绘制底部阴影
         canvas.drawRect(0, retHeight - shadowHeight, retWidth, retHeight, shadowPaint);
         //绘制文字
-        Rect bounds = new Rect();
-        fontPaint.getTextBounds(content, 0, content.length(), bounds);
-        canvas.drawText(content, paddingLeft, retHeight - paddingBottom, fontPaint);
+//        Rect bounds = new Rect();
+//        textPaint.getTextBounds(content, 0, content.length(), bounds);
+        StaticLayout layout = new StaticLayout(content, textPaint, 700, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, true);
+        canvas.save();
+        canvas.translate(paddingLeft, retHeight - paddingBottom - 2 * textSize);
+        layout.draw(canvas);
+        canvas.restore();
 
         if (recycle && !src.isRecycled()) src.recycle();
         return ret;

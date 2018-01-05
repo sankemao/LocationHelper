@@ -339,14 +339,6 @@ public class HomeActivity extends BaseActivity {
     }
 
     /**
-     * 获取dialog中的输入
-     */
-    private String getDialogInputString(int etId) {
-        TextView tv = mSaveDialog.getView(etId);
-        return tv.getText().toString().trim();
-    }
-
-    /**
      * 按两次返回
      */
     @Override

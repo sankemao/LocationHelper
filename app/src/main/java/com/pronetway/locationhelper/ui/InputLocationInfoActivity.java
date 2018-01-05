@@ -56,11 +56,14 @@ public class InputLocationInfoActivity extends BaseActivity {
     private Uri mImageUri;
     //temp图片文件
     private File mImageFile;
-    private String mAddress;
     private String mLatitude;
     private String mLongitude;
     private String mTime;
-    private String mWaterMarkedImageName;
+    private String mMac;
+    //场所名称
+    private String mPlace;
+    //最终保存的地址
+    private String mRealAddress;
 
 
     public static void go(Context context, String address, String latitude, String longitude, String time) {
@@ -96,15 +99,15 @@ public class InputLocationInfoActivity extends BaseActivity {
     protected void initView(Bundle savedInstanceState) {
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra(BUNDLE);
-        mAddress = bundle.getString(ADDRESS);
+        String originalAddress = bundle.getString(ADDRESS);
         mLatitude = bundle.getString(LATITUDE);
         mLongitude = bundle.getString(LONGITUDE);
         mTime = bundle.getString(TIME);
 
         mEtMac.addTextChangedListener(new MacTextWatcher(mEtMac));
-        mEtAddress.setText(mAddress);
+        //回显地址
+        mEtAddress.setText(originalAddress);
 
-        mWaterMarkedImageName = mLatitude + mLongitude + ".jpg";
     }
 
     @Override
@@ -123,9 +126,10 @@ public class InputLocationInfoActivity extends BaseActivity {
     @OnClick(R.id.btn_take_photo)
     public void onTakePhoto() {
         //先检测, 用以添加水印的信息
-        String mac = mEtMac.getText().toString().trim();
-        String place = mEtPlace.getText().toString().trim();
-        if (!check(mac, place)) {
+        mMac = mEtMac.getText().toString().trim();
+        mPlace = mEtPlace.getText().toString().trim();
+        mRealAddress = mEtAddress.getText().toString().trim();
+        if (!check(mMac, mPlace, mRealAddress)) {
             return;
         }
 
@@ -156,7 +160,8 @@ public class InputLocationInfoActivity extends BaseActivity {
         String mac = mEtMac.getText().toString().trim();
         String place = mEtPlace.getText().toString().trim();
         String remark = mEtRemark.getText().toString().trim();
-        if (!check(mac, place)) {
+        mRealAddress = mEtAddress.getText().toString().trim();
+        if (!check(mac, place, mRealAddress)) {
             return;
         }
 
@@ -172,7 +177,7 @@ public class InputLocationInfoActivity extends BaseActivity {
     /**
      * 检测mac以及场所名称的合法性
      */
-    public boolean check(String mac, String place) {
+    public boolean check(String mac, String place, String address) {
         if (TextUtils.isEmpty(mac)) {
             ToastUtils.showShort("请输入mac");
             return false;
@@ -185,6 +190,12 @@ public class InputLocationInfoActivity extends BaseActivity {
             ToastUtils.showShort("请输入场所名称");
             return false;
         }
+
+        if (TextUtils.isEmpty(address)) {
+            ToastUtils.showShort("请输入地址");
+            return false;
+        }
+
         return true;
     }
 
@@ -194,13 +205,14 @@ public class InputLocationInfoActivity extends BaseActivity {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CAMERA && mImageUri != null) {
             //从文件中获取缩放后的bitmap, 并按比例缩放
             Bitmap scaledBitmap = ImageUtils.getBitmap(mImageFile, 720, 720);
+            String waterMark = "设备MAC：" + mMac + "\r\n场所名称：" + mPlace + "\r\n安装时间：" + mTime + "\r\n安装地址：" + mRealAddress;
             //添加水印
-            Bitmap watermarkedBitmap = BitmapUtils.addTextWatermark(scaledBitmap, "我是2b", ConvertUtils.sp2px(20), Color.WHITE, 100, 90, false);
+            Bitmap watermarkedBitmap = BitmapUtils.addTextWatermark(scaledBitmap, waterMark, ConvertUtils.sp2px(9), Color.WHITE, 28, 118, false);
             //保存图片到本地
             if (watermarkedBitmap == null) {
                 ToastUtils.showShort("添加水印失败");
             } else {
-                ImageUtils.save(watermarkedBitmap, Constant.Path.PHOTO_PATH + File.separator + mWaterMarkedImageName, Bitmap.CompressFormat.JPEG, false);
+                ImageUtils.save(watermarkedBitmap, Constant.Path.PHOTO_PATH + File.separator + mTime + ".jpg", Bitmap.CompressFormat.JPEG, false);
                 mIvPhoto.setImageBitmap(watermarkedBitmap);
             }
         }

@@ -14,6 +14,9 @@ import android.view.WindowManager;
  */
 public class StatusbarUtil {
 
+    /**
+     * 沉浸式状态栏
+     */
     public static void setStatusBarColor(Activity activity, @ColorInt int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             activity.getWindow().setStatusBarColor(color);
@@ -42,6 +45,9 @@ public class StatusbarUtil {
         }
     }
 
+    /**
+     * 获取状态栏高度
+     */
     public static int getStatusBarHeight(Activity activity) {
         Resources resources = activity.getResources();
         int statusBarHeightId = resources.getIdentifier("status_bar_height","dimen","android");
@@ -51,7 +57,6 @@ public class StatusbarUtil {
 
     /**
      * 设置全屏.
-     * @param activity
      */
     public static void setActivityTranslucent(Activity activity) {
         //5.0以上, 全屏

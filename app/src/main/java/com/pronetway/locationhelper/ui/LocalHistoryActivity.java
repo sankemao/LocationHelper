@@ -16,6 +16,7 @@ import com.pronetway.locationhelper.bean.LocationInfo;
 import com.pronetway.locationhelper.db.dbutils.LocationDbUtils;
 import com.pronetway.locationhelper.utils.MacTextWatcher;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -150,6 +151,20 @@ public class LocalHistoryActivity extends BaseActivity {
                         if (mCurrentSelectItem != null) {
                             mCurrentSelectItem.setSelected(false);
                         }
+                    }
+                })
+                .setOnClickListener(R.id.tv_look_photo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //查看照片
+                        String photoName = info.getTime() + ".jpg";
+                        File file = new File(Constant.Path.PHOTO_PATH, photoName);
+                        if (!file.exists()) {
+                            ToastUtils.showShort("未找到相关照片");
+                            return;
+                        }
+
+                        BigImageActivity.go(LocalHistoryActivity.this, photoName);
                     }
                 })
                 .show();
