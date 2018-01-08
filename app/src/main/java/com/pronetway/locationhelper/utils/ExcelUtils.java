@@ -1,10 +1,14 @@
 package com.pronetway.locationhelper.utils;
 
+import android.graphics.Bitmap;
+
 import com.pronetway.locationhelper.app.Constant;
 import com.pronetway.locationhelper.bean.LocationInfo;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -152,6 +156,22 @@ public class ExcelUtils {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 写入图片到excel
+     */
+    private void writeImage(Bitmap bitmap) {
+        FileOutputStream fileOut = null;
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("sheet1");
+        HSSFRow row = sheet.createRow(0);
+
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        HSSFCell cell = row.createCell(0);
+
+//        this.getClass().getResource();
     }
 
     /**

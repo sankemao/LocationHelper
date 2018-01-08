@@ -7,29 +7,32 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.pronetway.locationhelper.R;
 import com.pronetway.locationhelper.app.Constant;
 import com.pronetway.locationhelper.bean.LocationInfo;
 import com.pronetway.locationhelper.db.dbutils.LocationDbUtils;
+import com.pronetway.locationhelper.utils.CommonUtils;
 import com.pronetway.locationhelper.utils.MacTextWatcher;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import sankemao.baselib.mvp.BaseActivity;
 import sankemao.baselib.mvp.PresenterManager;
-import sankemao.baselib.recyclerview.JViewHolder;
-import sankemao.baselib.recyclerview.JrecyAdapter;
 import sankemao.baselib.recyclerview.LoadRefreshRecyclerView;
 import sankemao.baselib.recyclerview.RefreshRecyclerView;
 import sankemao.baselib.recyclerview.decoration.MyItemDecoration;
 import sankemao.baselib.recyclerview.headfootview.DefaultLoadMoreCreator;
 import sankemao.baselib.recyclerview.headfootview.DefaultRefreshCreator;
 import sankemao.baselib.ui.dialog.AlertDialog;
+import sankemao.baselib.ui.navigation.AbsNavigationBar;
 import sankemao.baselib.ui.navigation.DefaultNavigationBar;
 
 
@@ -38,7 +41,6 @@ public class LocalHistoryActivity extends BaseActivity {
     @BindView(R.id.rv_locations)
     LoadRefreshRecyclerView mRvLocations;
 
-    private JrecyAdapter<LocationInfo> mLocationAdapter;
 
     private int offset = 0;
     private AlertDialog mSelectDialog;
@@ -46,6 +48,10 @@ public class LocalHistoryActivity extends BaseActivity {
     private View mCurrentSelectItem;
     private AlertDialog mEditDialog;
     private AlertDialog mConfirmDialog;
+    private LocationHistoryAdapter mLocationHistoryAdapter;
+    private TextView mTvCancel;
+    private TextView mTvMultiSelect;
+    private TextView mTvUp;
 
     @Override
     public PresenterManager attachPresenters() {
@@ -59,7 +65,7 @@ public class LocalHistoryActivity extends BaseActivity {
 
     @Override
     protected void initNavigationBar() {
-        new DefaultNavigationBar.Builder(this, R.layout.navigationbar_common, null)
+        AbsNavigationBar navigationBar = new DefaultNavigationBar.Builder(this, R.layout.navigationbar_common, null)
                 .setOnClickListener(R.id.iv_back, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -67,35 +73,61 @@ public class LocalHistoryActivity extends BaseActivity {
                     }
                 })
                 .setText(R.id.tv_title, "位置记录")
+                .setText(R.id.tv_multi_select, "多选")
+                .setText(R.id.tv_cancel, "取消")
+                .setText(R.id.tv_up, "上传")
+                .setOnClickListener(R.id.tv_multi_select, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mLocationHistoryAdapter.enableMultiSelect();
+                        mTvCancel.setVisibility(View.VISIBLE);
+                        mTvUp.setVisibility(View.VISIBLE);
+                    }
+                })
+                .setOnClickListener(R.id.tv_cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mLocationHistoryAdapter.cancelMutiSelect();
+                        mTvCancel.setVisibility(View.GONE);
+                        mTvUp.setVisibility(View.GONE);
+                    }
+                })
+                .setOnClickListener(R.id.tv_up, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //批量上传图片
+                        List<File> fileList = mLocationHistoryAdapter.getFileList();
+                        if (fileList.size() <= 0) {
+                            ToastUtils.showShort("请先选择需要分享的图片");
+                            return;
+                        }
+                        CommonUtils.shareImages(LocalHistoryActivity.this, fileList);
+                    }
+                })
                 .build();
+
+        mTvCancel = (TextView) navigationBar.getViewById(R.id.tv_cancel);
+        mTvCancel.setVisibility(View.GONE);
+        mTvMultiSelect = (TextView) navigationBar.getViewById(R.id.tv_multi_select);
+        mTvMultiSelect.setVisibility(View.VISIBLE);
+
+        mTvUp = (TextView) navigationBar.getViewById(R.id.tv_up);
+        mTvUp.setVisibility(View.GONE);
     }
 
     @Override
     protected void initView(Bundle savedInstanceState) {
         mRvLocations.setLayoutManager(new LinearLayoutManager(this));
-        mLocationAdapter = new JrecyAdapter<LocationInfo>(this, null, R.layout.rv_item_location) {
-
+        mLocationHistoryAdapter = new LocationHistoryAdapter(this, null, R.layout.rv_item_location);
+        mLocationHistoryAdapter.setNormalClick(new LocationHistoryAdapter.NormalClick() {
             @Override
-            protected void convert(JViewHolder holder, final LocationInfo info, final int position) {
-                holder.setText(R.id.tv_mac, String.format(getString(R.string.device_mac), info.getMac()))
-                        .setText(R.id.tv_place, String.format(getString(R.string.place_name), info.getPlace()))
-                        .setText(R.id.tv_address, String.format(getString(R.string.address), info.getAddress()))
-                        .setText(R.id.tv_longitude, String.format(getString(R.string.longitude), info.getLongitude()))
-                        .setText(R.id.tv_latitude, String.format(getString(R.string.latitude), info.getLatitude()))
-                        .setText(R.id.tv_remark, String.format(getString(R.string.remark), info.getRemark()))
-                        .setText(R.id.tv_time, String.format(getString(R.string.time), info.getTime()))
-                        .setText(R.id.tv_position, String.valueOf(position))
-                        .setOnItemClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                v.setSelected(true);
-                                mCurrentSelectItem = v;
-                                showSelectDialog(position, info);
-                            }
-                        });
+            public void onNormalClick(int position, LocationInfo locationInfo, View currentSelectItemView) {
+                currentSelectItemView.setSelected(true);
+                mCurrentSelectItem = currentSelectItemView;
+                showSelectDialog(position, locationInfo);
             }
-        };
-        mRvLocations.setAdapter(mLocationAdapter);
+        });
+        mRvLocations.setAdapter(mLocationHistoryAdapter);
         mRvLocations.addLoadViewCreator(new DefaultLoadMoreCreator());
         mRvLocations.addRefreshViewCreator(new DefaultRefreshCreator());
 
@@ -145,26 +177,27 @@ public class LocalHistoryActivity extends BaseActivity {
                         dissmissSelectDialog();
                     }
                 })
+                .setOnClickListener(R.id.tv_share_photo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String imagePath = Constant.Path.PHOTO_PATH + File.separator + info.getTime() + ".jpg";
+                        boolean fileExists = FileUtils.isFileExists(imagePath);
+                        if (!fileExists) {
+                            ToastUtils.showShort("没有相关图片");
+                        } else {
+                            List<File> files = new ArrayList<>();
+                            files.add(new File(imagePath));
+                            CommonUtils.shareImages(LocalHistoryActivity.this, files);
+                        }
+                        mSelectDialog.dismiss();
+                    }
+                })
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         if (mCurrentSelectItem != null) {
                             mCurrentSelectItem.setSelected(false);
                         }
-                    }
-                })
-                .setOnClickListener(R.id.tv_look_photo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //查看照片
-                        String photoName = info.getTime() + ".jpg";
-                        File file = new File(Constant.Path.PHOTO_PATH, photoName);
-                        if (!file.exists()) {
-                            ToastUtils.showShort("未找到相关照片");
-                            return;
-                        }
-
-                        BigImageActivity.go(LocalHistoryActivity.this, photoName);
                     }
                 })
                 .show();
@@ -188,7 +221,7 @@ public class LocalHistoryActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         LocationDbUtils.getInstance().deleteLocation(info);
-                        mLocationAdapter.removeItem(position);
+                        mLocationHistoryAdapter.removeItem(position);
                         ToastUtils.showShort("删除成功");
                         mConfirmDialog.dismiss();
                     }
@@ -234,7 +267,7 @@ public class LocalHistoryActivity extends BaseActivity {
                         //保存到db.
                         LocationDbUtils.getInstance().updateLocation(info);
                         //列表数据更新
-                        mLocationAdapter.notifyDataSetChanged();
+                        mLocationHistoryAdapter.notifyDataSetChanged();
                         mEditDialog.dismiss();
                     }
                 })
@@ -280,20 +313,12 @@ public class LocalHistoryActivity extends BaseActivity {
         }
 
         if (offset == 0) {
-            mLocationAdapter.refreshAllData(infos);
+            mLocationHistoryAdapter.refreshAllData(infos);
         } else {
-            mLocationAdapter.addAllData(infos);
+            mLocationHistoryAdapter.addAllData(infos);
         }
 
         mRvLocations.stopRefreshLoad(Constant.Db.DB_LIMIT);
         offset = offset + Constant.Db.DB_LIMIT;
     }
-//
-//    @OnClick(R.id.btn_test)
-//    public void onViewClicked() {
-//        LocationInfo locationInfo = new LocationInfo("11:11:11:11:11:11", "abc", "上海新网程测试", "121.222222", "21.222222", "备注测试", "12.25-18:10");
-//        //保存到db.
-//        LocationDbUtils.getInstance().insertLocation(locationInfo);
-//        mLocationAdapter.notifyDataSetChanged();
-//    }
 }

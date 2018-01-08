@@ -40,7 +40,7 @@
             <TextView
                 android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:text="分享选择..."
+                android:text="分享Excel..."
                 android:textColor="#000"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

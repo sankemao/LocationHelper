@@ -171,6 +171,8 @@ public class InputLocationInfoActivity extends BaseActivity {
         ExcelUtils.getInstance().writeLocationInfo(locationInfo, Constant.Path.EXCEL_NAME);
         //保存到db.
         LocationDbUtils.getInstance().insertLocation(locationInfo);
+        //保存图片到excel
+
         ToastUtils.showShort("保存成功");
     }
 

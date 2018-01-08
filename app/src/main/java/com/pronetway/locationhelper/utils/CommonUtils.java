@@ -11,6 +11,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.pronetway.locationhelper.app.Constant;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Description:TODO
@@ -92,4 +94,36 @@ public class CommonUtils {
             e.printStackTrace();
         }
     }
+
+    public static void shareImages(Context context, List<File> files) {
+        if (files == null || files.size() <= 0) {
+            return;
+        }
+
+        ArrayList<Uri> uris = new ArrayList<>();
+
+        for (File file : files) {
+            Uri uri = Uri.fromFile(file);
+            uris.add(uri);
+        }
+
+        boolean multiple = uris.size() > 1;
+        Intent intent = new Intent();
+        intent.setAction(multiple ? Intent.ACTION_SEND_MULTIPLE : Intent.ACTION_SEND);
+        if (multiple) {
+            intent.setType("*/*");
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        } else {
+            intent.setType("image/jpeg");
+            intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
+        }
+
+        try {
+            context.startActivity(Intent.createChooser(intent, "Share"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
