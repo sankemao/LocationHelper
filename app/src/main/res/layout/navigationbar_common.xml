@@ -4,7 +4,7 @@
                 android:id="@+id/rl_title_bar"
               android:background="@color/colorPrimaryDark"
               android:layout_width="match_parent"
-              android:layout_height="40dp">
+              android:layout_height="42dp">
 
     <ImageView
         android:id="@+id/iv_back"
@@ -36,7 +36,7 @@
 
 
     <TextView
-        android:id="@+id/tv_cancel"
+        android:id="@+id/tv_left"
         android:layout_toLeftOf="@id/tv_multi_select"
         tools:text="取消"
         android:visibility="gone"
@@ -48,7 +48,7 @@
 
     <TextView
         android:id="@+id/tv_up"
-        android:layout_toLeftOf="@id/tv_cancel"
+        android:layout_toLeftOf="@id/tv_left"
         tools:text="上传"
         android:visibility="gone"
         android:layout_marginRight="8dp"

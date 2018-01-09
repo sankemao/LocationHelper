@@ -21,6 +21,8 @@ public class MyApplication extends Application {
         cxt = this;
         Utils.init(this);
         AMLocationUtil.init(this);
+
+//        Tiny.getInstance().debug(true).init(this);
     }
 
 }

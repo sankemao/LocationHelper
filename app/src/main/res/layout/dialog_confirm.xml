@@ -5,7 +5,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <TextView
-        android:text="提示"
+        android:text="温馨提示"
         android:textSize="16sp"
         android:gravity="center"
         android:padding="10dp"
@@ -21,11 +21,10 @@
     <TextView
         android:id="@+id/tv_content"
         android:textColor="#000"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:gravity="center"
         android:textSize="14sp"
-        android:text="该操作将删除已记录的excel"
         android:layout_width="match_parent"
         android:layout_height="60dp"/>
 
@@ -37,15 +36,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <TextView
-            android:id="@+id/tv_cancel"
-            android:textColor="#000"
+            android:id="@+id/tv_left"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="取消"
-            android:textSize="15sp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="42dp"/>
+            android:textColor="#000"
+            android:textSize="15sp"/>
 
         <View
             android:background="#CCCCCC"
@@ -53,7 +53,7 @@
             android:layout_height="match_parent"/>
 
         <TextView
-            android:id="@+id/tv_del"
+            android:id="@+id/tv_right"
             android:textColor="#000"
             android:textSize="15sp"
             android:gravity="center"

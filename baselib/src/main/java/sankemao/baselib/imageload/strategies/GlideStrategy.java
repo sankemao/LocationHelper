@@ -6,6 +6,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import sankemao.baselib.imageload.ImageLoaderOptions;
 import sankemao.baselib.imageload.ImageLoaderStrategyInter;
@@ -25,7 +26,9 @@ public class GlideStrategy implements ImageLoaderStrategyInter {
 
         loadOptions(mRequest, options);
 
-        mRequest.into(((ImageView) container));
+        mRequest.into((ImageView) container);
+
+        mRequest.diskCacheStrategy(DiskCacheStrategy.NONE);
     }
 
     private void loadOptions(DrawableTypeRequest<Object> mRequest, ImageLoaderOptions options) {
@@ -50,6 +53,14 @@ public class GlideStrategy implements ImageLoaderStrategyInter {
         if (options.getResizeWidth() > 0 || options.getResizeHeight() > 0) {
             mRequest.override(options.getResizeWidth(), options.getResizeHeight());
         }
+
+        //设置缓存策略
+        if (options.getDiskCacheStrategy() != DiskCacheStrategy.ALL) {
+            mRequest.diskCacheStrategy(options.getDiskCacheStrategy());
+        }
+
+
+        mRequest.skipMemoryCache(options.getSkipMemoryCache());
     }
 
     @Override

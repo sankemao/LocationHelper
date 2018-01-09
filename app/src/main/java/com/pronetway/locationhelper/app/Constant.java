@@ -21,6 +21,7 @@ public class Constant {
 
     public static final class Permission {
         public static final int APP_PERSSION = 0x0011;
+        public static final int CAMERA_PERSSION = 0x0012;
     }
 
     public static final class Db{

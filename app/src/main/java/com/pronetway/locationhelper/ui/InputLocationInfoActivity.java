@@ -1,5 +1,7 @@
 package com.pronetway.locationhelper.ui;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.pronetway.locationhelper.R;
@@ -24,16 +27,24 @@ import com.pronetway.locationhelper.db.dbutils.LocationDbUtils;
 import com.pronetway.locationhelper.utils.BitmapUtils;
 import com.pronetway.locationhelper.utils.ExcelUtils;
 import com.pronetway.locationhelper.utils.MacTextWatcher;
+import com.zxy.tiny.Tiny;
+import com.zxy.tiny.callback.BitmapCallback;
 
 import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import sankemao.baselib.imageload.ImageLoaderManager;
 import sankemao.baselib.mvp.BaseActivity;
 import sankemao.baselib.mvp.PresenterManager;
+import sankemao.baselib.permission.PermissionFail;
+import sankemao.baselib.permission.PermissionHelper;
+import sankemao.baselib.permission.PermissionSucceed;
+import sankemao.baselib.ui.dialog.AlertDialog;
 import sankemao.baselib.ui.navigation.DefaultNavigationBar;
 
 import static com.pronetway.locationhelper.app.Constant.Path.PHOTO_PATH;
+import static com.pronetway.locationhelper.app.Constant.Permission.CAMERA_PERSSION;
 
 public class InputLocationInfoActivity extends BaseActivity {
     public static final String ADDRESS = "_address";
@@ -53,6 +64,8 @@ public class InputLocationInfoActivity extends BaseActivity {
     EditText mEtAddress;
     @BindView(R.id.et_remark)
     EditText mEtRemark;
+    @BindView(R.id.iv_clear)
+    ImageView mIvClear;
     private Uri mImageUri;
     //temp图片文件
     private File mImageFile;
@@ -64,8 +77,17 @@ public class InputLocationInfoActivity extends BaseActivity {
     private String mPlace;
     //最终保存的地址
     private String mRealAddress;
+    private Bitmap mCompressedBitmap;
+    private AlertDialog mConfirmDialog;
+    //需要修改的locationInfo
+    private LocationInfo mLocationInfo;
 
+    private String mImagePath;
+    private Intent mIntent;
 
+    /**
+     * 主页跳转过来，添加locationInfo
+     */
     public static void go(Context context, String address, String latitude, String longitude, String time) {
         Intent intent = new Intent(context, InputLocationInfoActivity.class);
         Bundle bundle = new Bundle();
@@ -75,6 +97,15 @@ public class InputLocationInfoActivity extends BaseActivity {
         bundle.putString(TIME, time);
         intent.putExtra(BUNDLE, bundle);
         context.startActivity(intent);
+    }
+
+    /**
+     * 历史记录页面跳转过来，修改locationInfo。
+     */
+    public static void go(Activity activity, LocationInfo locationInfo, int requestCode) {
+        Intent intent = new Intent(activity, InputLocationInfoActivity.class);
+        intent.putExtra("locationInfo", locationInfo);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     @Override
@@ -88,7 +119,7 @@ public class InputLocationInfoActivity extends BaseActivity {
                 .setOnClickListener(R.id.iv_back, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        finish();
+                        backPressed();
                     }
                 })
                 .setText(R.id.tv_title, "录入信息")
@@ -97,12 +128,34 @@ public class InputLocationInfoActivity extends BaseActivity {
 
     @Override
     protected void initView(Bundle savedInstanceState) {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getBundleExtra(BUNDLE);
-        String originalAddress = bundle.getString(ADDRESS);
-        mLatitude = bundle.getString(LATITUDE);
-        mLongitude = bundle.getString(LONGITUDE);
-        mTime = bundle.getString(TIME);
+        mIntent = getIntent();
+        mLocationInfo = mIntent.getParcelableExtra("locationInfo");
+        String originalAddress;
+        if (mLocationInfo != null) {
+            mMac = mLocationInfo.getMac();
+            mPlace = mLocationInfo.getPlace();
+            originalAddress = mLocationInfo.getAddress();
+            String remark = mLocationInfo.getRemark();
+            mTime = mLocationInfo.getTime();
+            //回显
+            mEtMac.setText(mMac);
+            mEtPlace.setText(mPlace);
+            mEtAddress.setText(originalAddress);
+            mEtRemark.setText(remark);
+            mImagePath = Constant.Path.PHOTO_PATH + File.separator + mLocationInfo.getTime() + ".jpg";
+            if (FileUtils.isFileExists(mImagePath)) {
+                ImageLoaderManager.INSTANCE.showImage(mIvPhoto, mImagePath);
+                mIvClear.setVisibility(View.VISIBLE);
+            }
+        } else {
+            Bundle bundle = mIntent.getBundleExtra(BUNDLE);
+            originalAddress = bundle.getString(ADDRESS);
+            mLatitude = bundle.getString(LATITUDE);
+            mLongitude = bundle.getString(LONGITUDE);
+            mTime = bundle.getString(TIME);
+            mImagePath = Constant.Path.PHOTO_PATH + File.separator + mTime + ".jpg";
+        }
+
 
         mEtMac.addTextChangedListener(new MacTextWatcher(mEtMac));
         //回显地址
@@ -121,11 +174,61 @@ public class InputLocationInfoActivity extends BaseActivity {
     }
 
     /**
-     * 拍照
+     * 图片右上角删除按钮
      */
-    @OnClick(R.id.btn_take_photo)
-    public void onTakePhoto() {
-        //先检测, 用以添加水印的信息
+    @OnClick(R.id.iv_clear)
+    public void onClearClick(View view) {
+        ImageLoaderManager.INSTANCE.showImage(mIvPhoto, R.drawable.icon_add);
+        mCompressedBitmap = null;
+        view.setVisibility(View.INVISIBLE);
+    }
+
+    @OnClick(R.id.iv_photo)
+    public void onPhotoClick(View v) {
+        if (mIvClear.getVisibility() == View.VISIBLE) {
+            //查看大图
+//            if (!BitmapUtils.isEmptyBitmap(mCompressedBitmap)) {
+//                BigImageActivity.go(this, mImagePath);
+//            } else if (FileUtils.isFileExists(mImagePath)) {
+//                BigImageActivity.go(this, mImagePath);
+//            }
+
+            BigImageActivity.go(this, mImagePath);
+        } else {
+            //拍照
+            PermissionHelper.with(InputLocationInfoActivity.this).requestCode(CAMERA_PERSSION)
+                    .requestPermission(Manifest.permission.CAMERA)
+                    .request();
+        }
+    }
+
+    /**
+     * 6.0权限适配
+     */
+    @PermissionSucceed(requestCode = CAMERA_PERSSION)
+    private void permissionSucceed() {
+        takePhotoNow();
+    }
+
+    /**
+     * 6.0权限适配
+     */
+    @PermissionFail(requestCode = CAMERA_PERSSION)
+    private void permissionFail() {
+        ToastUtils.showShort("请手动打开app拍照权限");
+    }
+
+    /**
+     * 6.0权限适配
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        PermissionHelper.requestPermissionsResult(this,
+                CAMERA_PERSSION, permissions);
+    }
+
+    private void takePhotoNow() {
+        //检测信息，添加水印
         mMac = mEtMac.getText().toString().trim();
         mPlace = mEtPlace.getText().toString().trim();
         mRealAddress = mEtAddress.getText().toString().trim();
@@ -141,16 +244,16 @@ public class InputLocationInfoActivity extends BaseActivity {
             dir.mkdirs();
         }
         mImageFile = new File(PHOTO_PATH, "temp.jpg");
-        //file:///storage/emulated/0/com.pronetway.locationhelper/%E7%85%A7%E7%89%87/test.jpg
+        //file:///storage/emulated/0/com.pronetway.locationhelper/%E7%85%A7%E7%89%87/temp.jpg
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             mImageUri = FileProvider.getUriForFile(this, "com.pronetway.locationhelper.fileprovider", mImageFile);
         } else {
             mImageUri = Uri.fromFile(mImageFile);
         }
-        mImageUri = Uri.fromFile(mImageFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri); // set the image file name
         startActivityForResult(intent, REQUEST_CODE_CAMERA);
     }
+
 
     /**
      * 保存mac信息
@@ -166,14 +269,26 @@ public class InputLocationInfoActivity extends BaseActivity {
         }
 
         String address = mEtAddress.getText().toString().trim();
-        LocationInfo locationInfo = new LocationInfo(mac, place, address, mLatitude, mLongitude, remark, mTime);
-        //保存到excel
-        ExcelUtils.getInstance().writeLocationInfo(locationInfo, Constant.Path.EXCEL_NAME);
-        //保存到db.
-        LocationDbUtils.getInstance().insertLocation(locationInfo);
-        //保存图片到excel
-
-        ToastUtils.showShort("保存成功");
+        if (mLocationInfo == null) {
+            mLocationInfo = new LocationInfo(mac, place, address, mLatitude, mLongitude, remark, mTime);
+            //保存到db.
+            LocationDbUtils.getInstance().insertLocation(mLocationInfo);
+            //保存到excel
+            ExcelUtils.getInstance().writeLocationInfo(mLocationInfo, Constant.Path.EXCEL_NAME);
+            ToastUtils.showShort("保存成功");
+        } else {
+            mLocationInfo.setMac(mac);
+            mLocationInfo.setPlace(place);
+            mLocationInfo.setAddress(mRealAddress);
+            mLocationInfo.setRemark(remark);
+            LocationDbUtils.getInstance().updateLocation(mLocationInfo);
+            //TODO:同步excel
+            Intent intent = new Intent();
+            intent.putExtra("locationInfo", mLocationInfo);
+            setResult(RESULT_OK, intent);
+//            ToastUtils.showShort("修改成功");
+        }
+        finish();
     }
 
     /**
@@ -205,19 +320,74 @@ public class InputLocationInfoActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CAMERA && mImageUri != null) {
-            //从文件中获取缩放后的bitmap, 并按比例缩放
-            Bitmap scaledBitmap = ImageUtils.getBitmap(mImageFile, 720, 720);
-            String waterMark = "设备MAC：" + mMac + "\r\n场所名称：" + mPlace + "\r\n安装时间：" + mTime + "\r\n安装地址：" + mRealAddress;
-            //添加水印
-            Bitmap watermarkedBitmap = BitmapUtils.addTextWatermark(scaledBitmap, waterMark, ConvertUtils.sp2px(9), Color.WHITE, 28, 118, false);
-            //保存图片到本地
-            if (watermarkedBitmap == null) {
-                ToastUtils.showShort("添加水印失败");
-            } else {
-                ImageUtils.save(watermarkedBitmap, Constant.Path.PHOTO_PATH + File.separator + mTime + ".jpg", Bitmap.CompressFormat.JPEG, false);
-                mIvPhoto.setImageBitmap(watermarkedBitmap);
-            }
+            //ndk压缩图片
+            Tiny.BitmapCompressOptions options = new Tiny.BitmapCompressOptions();
+//            options.width = 720;
+//            options.height = 0;
+            Tiny.getInstance()
+                    .source(mImageFile)
+                    .asBitmap()
+                    .withOptions(options)
+                    .compress(new BitmapCallback() {
+                        @Override
+                        public void callback(boolean b, Bitmap bitmap, Throwable throwable) {
+                            if (b) {
+                                mCompressedBitmap = bitmap;
+                            }
+                            String waterMark = "设备MAC：" + mMac + "\r\n场所名称：" + mPlace + "\r\n安装时间：" + mTime + "\r\n安装地址：" + mRealAddress;
+                            //添加水印
+                            Bitmap watermarkedBitmap = BitmapUtils.addTextWatermark(bitmap, waterMark, ConvertUtils.sp2px(9), Color.WHITE, 28, 118, false);
+                            //保存图片到本地
+                            if (watermarkedBitmap == null) {
+                                ToastUtils.showShort("添加水印失败");
+                            } else {
+                                ImageUtils.save(watermarkedBitmap, mImagePath, Bitmap.CompressFormat.JPEG, false);
+                                mIvPhoto.setImageBitmap(watermarkedBitmap);
+                                mIvClear.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    });
+
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        backPressed();
+    }
+
+    private void backPressed() {
+        if (mCompressedBitmap != null && !TextUtils.isEmpty(mMac) && !TextUtils.isEmpty(mPlace)) {
+            showConfirmDialog();
+        } else {
+            finish();
+        }
+    }
+
+    /**
+     * 确认退出弹窗
+     */
+    private void showConfirmDialog() {
+        mConfirmDialog = new AlertDialog.Builder(this)
+                .setContentView(R.layout.dialog_confirm)
+                .setWidthAndHeight(ConvertUtils.dp2px(260), -2)
+                .setText(R.id.tv_content, "输入内容未保存，是否继续退出？")
+                .setText(R.id.tv_right, "确定")
+                .addDefaultAnimation()
+                .setOnClickListener(R.id.tv_left, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mConfirmDialog.dismiss();
+                    }
+                })
+                .setOnClickListener(R.id.tv_right, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mConfirmDialog.dismiss();
+                        finish();
+                    }
+                })
+                .show();
     }
 
 }

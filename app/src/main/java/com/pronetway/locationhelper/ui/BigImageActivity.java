@@ -13,7 +13,6 @@ import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.pronetway.locationhelper.R;
-import com.pronetway.locationhelper.app.Constant;
 
 import java.io.File;
 
@@ -35,9 +34,9 @@ public class BigImageActivity extends BaseActivity {
     @BindView(R.id.rl_title_bar)
     RelativeLayout mRlTitleBar;
 
-    public static void go(Context context, String photoName) {
+    public static void go(Context context, String imagePath) {
         Intent intent = new Intent(context, BigImageActivity.class);
-        intent.putExtra("photoName", photoName);
+        intent.putExtra("imagePath", imagePath);
         context.startActivity(intent);
     }
 
@@ -57,13 +56,20 @@ public class BigImageActivity extends BaseActivity {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mRlTitleBar.getLayoutParams();
         params.topMargin = StatusbarUtil.getStatusBarHeight(this);
         mRlTitleBar.setLayoutParams(params);
+
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
     protected void initData(Bundle savedInstanceState) {
         Intent intent = getIntent();
-        String photoName = intent.getStringExtra("photoName");
-        Bitmap bitmap = ImageUtils.getBitmap(new File(Constant.Path.PHOTO_PATH, photoName));
+        String imagePath = intent.getStringExtra("imagePath");
+        Bitmap bitmap = ImageUtils.getBitmap(new File(imagePath));
         if (bitmap != null && bitmap.getWidth() != 0 && bitmap.getHeight() != 0) {
             mPhotoView.setImageBitmap(bitmap);
             mLoading.setVisibility(View.INVISIBLE);

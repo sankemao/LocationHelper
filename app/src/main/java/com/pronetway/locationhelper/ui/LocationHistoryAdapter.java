@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.pronetway.locationhelper.R;
 import com.pronetway.locationhelper.app.Constant;
 import com.pronetway.locationhelper.bean.LocationInfo;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import sankemao.baselib.imageload.ImageLoaderOptions;
 import sankemao.baselib.recyclerview.JViewHolder;
 import sankemao.baselib.recyclerview.JrecyAdapter;
 import sankemao.baselib.recyclerview.helper.DefaultHolderImageLoader;
@@ -26,13 +28,13 @@ import sankemao.baselib.recyclerview.helper.DefaultHolderImageLoader;
  */
 public class LocationHistoryAdapter extends JrecyAdapter<LocationInfo> {
 
-    public LocationHistoryAdapter(Context context, List<LocationInfo> showItems, int layoutId) {
-        super(context, showItems, layoutId);
-    }
-
     private SparseArray<Boolean> mArray = new SparseArray<>();
 
     private boolean multiSelect;
+
+    public LocationHistoryAdapter(Context context, List<LocationInfo> showItems, int layoutId) {
+        super(context, showItems, layoutId);
+    }
 
     /**
      * 选择或取消选择.
@@ -79,7 +81,7 @@ public class LocationHistoryAdapter extends JrecyAdapter<LocationInfo> {
 
     @Override
     protected void convert(JViewHolder holder, final LocationInfo info, final int position) {
-        String imagePath = Constant.Path.PHOTO_PATH + File.separator + info.getTime() + ".jpg";
+        final String imagePath = Constant.Path.PHOTO_PATH + File.separator + info.getTime() + ".jpg";
         final boolean fileExists = FileUtils.isFileExists(imagePath);
 
         holder.setText(R.id.tv_mac, String.format(mContext.getString(R.string.device_mac), info.getMac()))
@@ -109,11 +111,11 @@ public class LocationHistoryAdapter extends JrecyAdapter<LocationInfo> {
                 });
 
         if (fileExists) {
-            holder.setImgByUrl(R.id.iv_photo, new DefaultHolderImageLoader(imagePath))
+            holder.setImgByUrl(R.id.iv_photo, new DefaultHolderImageLoader(imagePath, ImageLoaderOptions.newOptions().setCropType(ImageLoaderOptions.centerCrop).skipMemoryCache(true).setDiskStrategy(DiskCacheStrategy.NONE)))
                     .setOnClickListener(R.id.iv_photo, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            BigImageActivity.go(mContext, info.getTime() + ".jpg");
+                            BigImageActivity.go(mContext, imagePath);
                         }
                     });
         } else {
@@ -129,6 +131,14 @@ public class LocationHistoryAdapter extends JrecyAdapter<LocationInfo> {
         this.mNormalClick = normalClick;
     }
 
+    public void notifyItemDataChanged(int position, LocationInfo locationInfo) {
+        mShowItems.set(position, locationInfo);
+        this.notifyItemChanged(position);
+    }
+
+    /**
+     * 非多选状态下点击事件
+     */
     public interface NormalClick {
         void onNormalClick(int position, LocationInfo locationInfo, View currentSelectItemView);
     }

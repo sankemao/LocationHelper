@@ -154,7 +154,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/tv_cancel"
+            android:id="@+id/tv_left"
             android:textColor="#000"
             android:gravity="center"
             android:text="取消"

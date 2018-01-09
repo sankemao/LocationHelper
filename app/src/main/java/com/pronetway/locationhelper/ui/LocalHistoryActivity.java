@@ -1,6 +1,7 @@
 package com.pronetway.locationhelper.ui;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,7 +42,7 @@ public class LocalHistoryActivity extends BaseActivity {
     @BindView(R.id.rv_locations)
     LoadRefreshRecyclerView mRvLocations;
 
-
+    private final int EDIT_REQUEST_CODE = 1001;
     private int offset = 0;
     private AlertDialog mSelectDialog;
 
@@ -52,6 +53,7 @@ public class LocalHistoryActivity extends BaseActivity {
     private TextView mTvCancel;
     private TextView mTvMultiSelect;
     private TextView mTvUp;
+    private int mCurrentModifiedPosition;
 
     @Override
     public PresenterManager attachPresenters() {
@@ -74,7 +76,7 @@ public class LocalHistoryActivity extends BaseActivity {
                 })
                 .setText(R.id.tv_title, "位置记录")
                 .setText(R.id.tv_multi_select, "多选")
-                .setText(R.id.tv_cancel, "取消")
+                .setText(R.id.tv_left, "取消")
                 .setText(R.id.tv_up, "上传")
                 .setOnClickListener(R.id.tv_multi_select, new View.OnClickListener() {
                     @Override
@@ -84,7 +86,7 @@ public class LocalHistoryActivity extends BaseActivity {
                         mTvUp.setVisibility(View.VISIBLE);
                     }
                 })
-                .setOnClickListener(R.id.tv_cancel, new View.OnClickListener() {
+                .setOnClickListener(R.id.tv_left, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mLocationHistoryAdapter.cancelMutiSelect();
@@ -106,7 +108,7 @@ public class LocalHistoryActivity extends BaseActivity {
                 })
                 .build();
 
-        mTvCancel = (TextView) navigationBar.getViewById(R.id.tv_cancel);
+        mTvCancel = (TextView) navigationBar.getViewById(R.id.tv_left);
         mTvCancel.setVisibility(View.GONE);
         mTvMultiSelect = (TextView) navigationBar.getViewById(R.id.tv_multi_select);
         mTvMultiSelect.setVisibility(View.VISIBLE);
@@ -156,8 +158,8 @@ public class LocalHistoryActivity extends BaseActivity {
     private void showSelectDialog(final int position, final LocationInfo info) {
         mSelectDialog = new AlertDialog.Builder(this)
                 .setContentView(R.layout.dialog_select)
-                .setWidthAndHeight(ConvertUtils.dp2px(300), -2)
-                .setOnClickListener(R.id.tv_del, new View.OnClickListener() {
+                .setWidthAndHeight(ConvertUtils.dp2px(260), -2)
+                .setOnClickListener(R.id.tv_right, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         showConfirmDialog(position, info);
@@ -167,11 +169,13 @@ public class LocalHistoryActivity extends BaseActivity {
                 .setOnClickListener(R.id.tv_edit, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showEditDialog(info);
+//                        showEditDialog(info);
+                        InputLocationInfoActivity.go(LocalHistoryActivity.this, info, EDIT_REQUEST_CODE);
+                        mCurrentModifiedPosition = position;
                         dissmissSelectDialog();
                     }
                 })
-                .setOnClickListener(R.id.tv_cancel, new View.OnClickListener() {
+                .setOnClickListener(R.id.tv_left, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dissmissSelectDialog();
@@ -209,15 +213,15 @@ public class LocalHistoryActivity extends BaseActivity {
     private void showConfirmDialog(final int position, final LocationInfo info) {
         mConfirmDialog = new AlertDialog.Builder(this)
                 .setContentView(R.layout.dialog_confirm)
-                .setWidthAndHeight(ConvertUtils.dp2px(300), -2)
+                .setWidthAndHeight(ConvertUtils.dp2px(260), -2)
                 .setText(R.id.tv_content, "设备mac为:\r\n" + info.getMac() + "\r\n确定删除这条记录?")
-                .setOnClickListener(R.id.tv_cancel, new View.OnClickListener() {
+                .setOnClickListener(R.id.tv_left, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mConfirmDialog.dismiss();
                     }
                 })
-                .setOnClickListener(R.id.tv_del, new View.OnClickListener() {
+                .setOnClickListener(R.id.tv_right, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         LocationDbUtils.getInstance().deleteLocation(info);
@@ -236,7 +240,7 @@ public class LocalHistoryActivity extends BaseActivity {
         mEditDialog = new AlertDialog.Builder(this)
                 .setContentView(R.layout.dialog_save)
                 .setWidthAndHeight(ConvertUtils.dp2px(300), -2)
-                .setOnClickListener(R.id.tv_cancel, new View.OnClickListener() {
+                .setOnClickListener(R.id.tv_left, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mEditDialog.dismiss();
@@ -300,7 +304,6 @@ public class LocalHistoryActivity extends BaseActivity {
         }
     }
 
-
     @Override
     protected void initData(Bundle savedInstanceState) {
         query();
@@ -320,5 +323,16 @@ public class LocalHistoryActivity extends BaseActivity {
 
         mRvLocations.stopRefreshLoad(Constant.Db.DB_LIMIT);
         offset = offset + Constant.Db.DB_LIMIT;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //修改成功后刷新列表
+        if (requestCode == EDIT_REQUEST_CODE && resultCode == RESULT_OK) {
+            ToastUtils.showShort("修改成功");
+            LocationInfo locationInfo = data.getParcelableExtra("locationInfo");
+            mLocationHistoryAdapter.notifyItemDataChanged(mCurrentModifiedPosition, locationInfo);
+        }
     }
 }

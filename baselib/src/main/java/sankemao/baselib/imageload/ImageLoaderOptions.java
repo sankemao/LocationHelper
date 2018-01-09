@@ -2,6 +2,8 @@ package sankemao.baselib.imageload;
 
 import android.support.annotation.DrawableRes;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import sankemao.baselib.R;
 
 /**
@@ -20,6 +22,8 @@ public class ImageLoaderOptions {
     private boolean mIsCrossFade;
     private int mResizeWidth = -1;
     private int mResizeHeight = -1;
+    private DiskCacheStrategy mDiskCacheStrategy = DiskCacheStrategy.ALL;
+    private boolean mSkipMemoryCache = false;
 
     public int getHolderRes() {
         return mHolderRes;
@@ -43,6 +47,14 @@ public class ImageLoaderOptions {
 
     public int getCropType() {
         return mCropType;
+    }
+
+    public DiskCacheStrategy getDiskCacheStrategy() {
+        return mDiskCacheStrategy;
+    }
+
+    public boolean getSkipMemoryCache() {
+        return mSkipMemoryCache;
     }
 
     private int mCropType = -1;
@@ -88,6 +100,16 @@ public class ImageLoaderOptions {
         if (cropType == centerCrop || cropType == fitCenter) {
             this.mCropType = cropType;
         }
+        return this;
+    }
+
+    public ImageLoaderOptions setDiskStrategy(DiskCacheStrategy strategy) {
+        this.mDiskCacheStrategy = strategy;
+        return this;
+    }
+
+    public ImageLoaderOptions skipMemoryCache(boolean skipMemoryCache) {
+        this.mSkipMemoryCache = skipMemoryCache;
         return this;
     }
 

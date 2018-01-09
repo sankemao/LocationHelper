@@ -26,6 +26,7 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.pronetway.locationhelper.R;
 import com.pronetway.locationhelper.app.Constant;
+import com.pronetway.locationhelper.db.dbutils.LocationDbUtils;
 import com.pronetway.locationhelper.utils.AMLocationUtil;
 import com.pronetway.locationhelper.utils.CommonUtils;
 
@@ -320,18 +321,20 @@ public class HomeActivity extends BaseActivity {
     private void showConfirmDialog() {
         mConfirmDialog = new AlertDialog.Builder(this)
                 .setContentView(R.layout.dialog_confirm)
-                .setWidthAndHeight(ConvertUtils.dp2px(300), -2)
+                .setText(R.id.tv_content, "该操作将删除excel和本地数据库!")
+                .setWidthAndHeight(ConvertUtils.dp2px(260), -2)
                 .addDefaultAnimation()
-                .setOnClickListener(R.id.tv_cancel, new View.OnClickListener() {
+                .setOnClickListener(R.id.tv_left, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mConfirmDialog.dismiss();
                     }
                 })
-                .setOnClickListener(R.id.tv_del, new View.OnClickListener() {
+                .setOnClickListener(R.id.tv_right, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         CommonUtils.delExcel(Constant.Path.EXCEL_NAME);
+                        LocationDbUtils.getInstance().wipeData();
                         mConfirmDialog.dismiss();
                     }
                 })
