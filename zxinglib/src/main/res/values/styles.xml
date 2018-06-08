@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 设置activity切换动画 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+</resources>

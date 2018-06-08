@@ -1,0 +1,25 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowAnimationStyle">@style/AnimaActivity</item>
+    </style>
+
+    <!--activity的全局进出动画-->
+    <style name="AnimaActivity">
+        <!--直接进入效果-->
+        <item name="android:activityOpenEnterAnimation">@anim/h_enter</item>
+        <!--未finish那个activity退出效果-->
+        <item name="android:activityOpenExitAnimation">@anim/h_exit</item>
+        <!--未finish的那个activity重新进入效果-->
+        <item name="android:activityCloseEnterAnimation">@anim/h_pop_enter</item>
+        <!--直接退出效果-->
+        <item name="android:activityCloseExitAnimation">@anim/h_pop_exit</item>
+    </style>
+
+
+</resources>

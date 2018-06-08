@@ -55,10 +55,21 @@ public class GlideStrategy implements ImageLoaderStrategyInter {
         }
 
         //设置缓存策略
-        if (options.getDiskCacheStrategy() != DiskCacheStrategy.ALL) {
-            mRequest.diskCacheStrategy(options.getDiskCacheStrategy());
+        if (options.getDiskCacheStrategy() != ImageLoaderOptions.DiskStrategy.ALL) {
+            switch (options.getDiskCacheStrategy()) {
+                case NONE:
+                    mRequest.diskCacheStrategy(DiskCacheStrategy.NONE);
+                    break;
+                case SOURCE:
+                    mRequest.diskCacheStrategy(DiskCacheStrategy.SOURCE);
+                    break;
+                case RESULT:
+                    mRequest.diskCacheStrategy(DiskCacheStrategy.RESULT);
+                    break;
+                default:
+                    break;
+            }
         }
-
 
         mRequest.skipMemoryCache(options.getSkipMemoryCache());
     }

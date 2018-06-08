@@ -10,7 +10,10 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/applocation" />
+            <option value="$PROJECT_DIR$/appscan" />
             <option value="$PROJECT_DIR$/baselib" />
+            <option value="$PROJECT_DIR$/zxinglib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

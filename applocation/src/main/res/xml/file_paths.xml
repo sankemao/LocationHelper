@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--external-path -> Environment.getExternalStorageDirectory()-->
+    <!--path="com.pronetway.locationhelper" -> 该目录下文件可以访问-->
+    <!--name="files" -> 加密过后展示content://.pronetway.locationhelper.fileprovider/files/文件-->
+    <paths>
+        <external-path
+            name="files" path="com.pronetway.dc.applocation" />
+    </paths>
+</resources>

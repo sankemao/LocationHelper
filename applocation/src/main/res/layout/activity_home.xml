@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.amap.api.maps2d.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+    <View
+        android:id="@+id/center"
+        android:layout_centerInParent="true"
+        android:layout_width="1px"
+        android:layout_height="1px"/>
+
+    <ImageView
+        android:layout_above="@+id/center"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/center_point"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"/>
+
+
+
+
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="4dp"
+        android:text="未获取到地址信息"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:background="@drawable/shape_content_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"/>
+
+    <TextView
+        android:id="@+id/tv_latlng"
+        android:layout_above="@id/tv_address"
+        android:layout_marginBottom="8dp"
+        android:text="未获取到经纬度信息"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:background="@drawable/shape_content_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"/>
+
+    <ImageView
+        android:id="@+id/iv_save"
+        android:onClick="onIvSaveClick"
+        android:layout_marginBottom="12dp"
+        android:padding="10dp"
+        android:src="@drawable/icon_save"
+        android:background="@drawable/selector_circle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_above="@+id/tv_latlng"
+        android:layout_alignLeft="@+id/iv_location"
+        android:layout_alignStart="@+id/iv_location"/>
+
+
+    <ImageView
+        android:id="@+id/iv_location"
+        android:onClick="onIvLocationClick"
+        android:layout_above="@id/iv_save"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="12dp"
+        android:padding="9dp"
+        android:src="@drawable/icon_location"
+        android:background="@drawable/selector_circle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+    <ImageView
+        android:id="@+id/iv_share"
+        android:onClick="onIvShareClick"
+        android:layout_marginTop="19dp"
+        android:padding="9dp"
+        android:src="@drawable/icon_share"
+        android:background="@drawable/selector_circle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/iv_location"
+        android:layout_alignStart="@+id/iv_location"/>
+
+
+</RelativeLayout>

@@ -4,7 +4,7 @@ package sankemao.baselib.http.callback;
 import java.io.File;
 
 import okhttp3.Response;
-import sankemao.baselib.commonutils.ThreadUtil;
+import sankemao.baselib.utils.ThreadUtil;
 import sankemao.baselib.http.progress.FileConvert;
 
 /**

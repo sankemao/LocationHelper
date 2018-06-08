@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.pronetway.dc.applocation">
+
+    <application android:theme="@style/AppTheme">
+
+        <!-- 7.0文件权限适配 -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.pronetway.dc.applocation.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+
+        <!-- 高德地图begin -->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="ccfd0fa94b6739bf4f592ba36525a391"/>
+
+        <service android:name="com.amap.api.location.APSService"/>
+        <!-- 高德地图end -->
+
+        <activity android:name="com.pronetway.dc.applocation.ui.HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="com.pronetway.dc.applocation.ui.LocalHistoryActivity">
+        </activity>
+        <activity android:name="com.pronetway.dc.applocation.ui.InputLocationInfoActivity">
+        </activity>
+        <activity android:name="com.pronetway.dc.applocation.ui.BigImageActivity">
+        </activity>
+    </application>
+
+</manifest>
